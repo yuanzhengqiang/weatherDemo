@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="keywords" content="weather forecast 天气预报"/>
+	<meta http-equiv="Access-Control-Allow-Origin" content="*"/>
+	<meta name="description" content="一款可以查看最近天气情况的单页面应用。"/>
+	<meta name="robots" content="index,nofollow"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no"/>
+	<meta content="telephone=no" name="format-detection" /> 
+	<title>天气预报</title>
+	
+<style type="text/css">
+html{font-size: 100px;}
+body{
+    padding:0;
+    margin:0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(240, 237, 236, 0.2);
+    overflow: hidden;
+    -webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+#app{
+	width: 100vw;
+    height: 100vh;
+}
+.hide, .waitHide{display: none ! important;}
+header{
+	width: 100%;
+	position: absolute;
+	top: 0rem;
+	height: 0.30rem;
+	text-align: center;
+	font-size: 0.1rem;
+	display:flex;
+	display:-webkit-flex;
+    line-height: 0.3rem;
+    color: #0B2A60;
+    opacity: 0;
+}
+.headLfet{
+	flex:1;
+	display: inline-block;
+	text-align: left;
+}
+.headCenter{
+	flex:3;
+	display: inline-block;
+	
+}
+.headRight{
+	flex:1;
+	display: inline-block;
+	text-align: right;
+}
+.headLeftDes{
+	width: 0.2rem;
+    height: 0.2rem;
+    line-height: 0.3rem;
+    margin-left: 0.15rem;
+    font-size: 0.15rem;
+}
+.headCenterDes{
+    line-height: 0.3rem;
+    font-size: 0.12rem;
+}
+.headRightDes{
+	width: 0.2rem;
+    height: 0.2rem;
+    line-height: 0.3rem;
+    margin-top: 0.05rem;
+    margin-right: 0.15rem;
+}
+.mainContent{
+	height: auto;
+	width: 100%;
+	overflow-y:auto; 
+	position: absolute;
+	top: 0.30rem;
+	bottom:0rem;
+	font-size: 0.26rem;
+}
+.mainContent::-webkit-scrollbar {display:none}
+.mainContent::-moz-scrollbar {display:none}
+.mainContent::-ms-scrollbar {display:none}
+.todayInfo{
+	padding: 0rem 0.5rem 0.4rem;
+    text-align: center;
+    color: #0B2A60;
+}
+.todayInfoCity{
+	font-size: 0.12rem;
+    margin-bottom: 0.2rem;
+}
+.todayInfoWeatherType{
+	font-size: 0.16rem;
+    font-weight: 700;
+    padding: 0.1rem 0rem 0rem;
+}
+.todayInfoWeatherTemperature{
+	font-size: 1rem;
+	display:flex;
+	display:-webkit-flex;
+	height: 1.1rem;
+}
+.todayInfoWeatherTemperatureLeft{
+	flex:1;
+	display: inline-block;
+	text-align: right;
+	visibility: hidden
+}
+.todayTemp{
+	visibility: visible;
+}
+.todayInfoWeatherTemperatureCenter{
+	flex:2;
+	display: inline-block;
+}
+.todayInfoWeatherTemperatureRight{
+	flex:1;
+	display: inline-block;
+	font-size: 0.7rem;
+	text-align: left;
+}
+.todayInfoWeatherPMDiv{
+	border: 0.02rem solid;
+    border-radius: 0.2rem;
+    height: 0.2rem;
+    display: inline-block;
+    margin-top: 0.1rem;
+    background-color: transparent;
+    outline: none;
+}
+.todayInfoWeatherPMDiv:active{
+	background-color: #0B2A60;
+	color: #FFF;
+}
+.todayInfoWeatherPMDiv:active .todayInfoWeatherPMImg{
+	width: 0.16rem;
+    height: 0.16rem;
+    background: url(IMG/whitePM.png) no-repeat center;
+    background-size: 100%;
+    display: inline-block;
+    position: relative;
+    top: -0.01rem;
+}
+.todayInfoWeatherPMImg{
+	width: 0.16rem;
+    height: 0.16rem;
+    background: url(IMG/bluePM.png) no-repeat center;
+    background-size: 100%;
+    display: inline-block;
+    position: relative;
+    top: -0.01rem;
+}
+.todayInfoWeatherPMDes{
+	font-size: 0.12rem;
+    position: relative;
+    top: -0.045rem;
+    left: -0.05rem;
+}
+.weekInfo{
+	margin: 0rem 0.15rem;
+    border-top: 0.01rem solid #DDD;
+    padding: 0.1rem 0rem;
+}
+.weekInfoRow{
+	display:flex;
+	display:-webkit-flex;
+	font-size: 0.14rem;
+	height: 0.2rem;
+	line-height: 0.2rem;
+	padding: 0.05rem;
+}
+.weekInfoRowLeft{
+	flex:1;
+	display: inline-block;
+	text-align: left;
+}
+.weekInfoRowCenter{
+	flex:1;
+	display: inline-block;
+	text-align: center;
+}
+.weekInfoRowCenterImg{
+	width: 0.7rem;
+}
+.weekInfoRowRight{
+	flex:1;
+	display: inline-block;
+	text-align: right;
+}
+.otherInfo{
+	display: flex;
+    display: -webkit-flex;
+    height: 0.6rem;
+    border-top: 0.01rem solid #f1f1f1;
+    padding: 0.08rem 0rem;
+	background-color: #f1f1f1;
+
+}
+.otherInfoCenter{
+	flex:1;
+	display: inline-block;
+	text-align: center;
+	background-color: #FFF;
+	padding: 0.1rem 0rem;
+}
+.otherInfoCenterTop{
+	height: 0.2rem;
+    line-height: 0.2rem;
+    font-size: 0.1rem;
+}
+.otherInfoCenterTopImg{
+	width: 0.1rem;
+    height: 0.1rem;
+    display: inline-block;
+    font-size: 0.1rem;
+}
+.imgLeft{
+	background-image: url(IMG/其他/风向.png);
+    background-size: 100%;
+}
+.imgCenter{
+	background-image: url(IMG/其他/水滴.png);
+    background-size: 100%;
+}
+.imgRight{
+	background-image: url(IMG/其他/温度计.png);
+    background-size: 100%;
+}
+.otherInfoCenterTopName{
+	font-size: 0.1rem;
+	color: #8f8f8f;
+    display: inline-block;
+}
+.otherInfoCenterBottom{
+	height: 0.2rem;
+    line-height: 0.2rem;
+    font-size: 0.14rem;
+}
+.wait{
+	width: 100vw;
+	height: 100vh;
+	display: block;
+	overflow: hidden;
+}
+.show{
+	display: block ! important;
+}
+.showFlex{
+	display:flex ! important;
+	display:-webkit-flex ! important;
+}
+.waitImg{
+	z-index: 100;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	webkit-transform: translateX(-50%) translateY(-50%);
+	-moz-transform: translateX(-50%) translateY(-50%);
+	-ms-transform: translateX(-50%) translateY(-50%);
+	transform: translateX(-50%) translateY(-50%);
+}
+.lifeInfo{
+	background-color: #f1f1f1;
+	padding: 0rem 0.02rem;
+}
+.lifeInfoBox{
+	display:flex;
+	display:-webkit-flex;
+}
+.lifeInfoBoxDes{
+	flex: 1;
+	display: inline-block;
+	text-align: center;
+	padding: 0.2rem;
+	margin: 0.015rem;
+	background-color: #FFF;
+	height: 0.8rem;
+
+}
+.lifeInfoBoxDes:active{
+	background-color: #eee;
+}
+.lifeInfoTopImg{
+	width: 0.3rem;
+	height: 0.3rem;
+}
+.lifeInfoCenter{
+	font-size: 0.09rem;
+	color: #888888;
+}
+.lifeInfoBottom{
+	font-size: 0.16rem;
+    font-weight: 700;
+}
+.modalBox{
+	position: fixed;
+	top: 45%;
+	left: 50%;
+	webkit-transform: translateX(-50%) translateY(-50%);
+	-moz-transform: translateX(-50%) translateY(-50%);
+	-ms-transform: translateX(-50%) translateY(-50%);
+	transform: translateX(-50%) translateY(-50%);
+	width: 70vw;
+    height: auto;
+    background-color: white;
+    text-align: left;
+    display: none;
+    z-index: 100;
+    padding: 0.15rem 0.2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0px 0px 20px #000 inset;
+}
+.modalAdvice{
+	font-size: 0.15rem;
+    font-family: 楷体;
+    display: block;
+}
+.shade{
+	width: 100vw;
+	height:100vh;
+	z-index: 99;
+	position: absolute;
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+	opacity: 0.5;
+	background-color: #000;
+	display: none;
+}
+.dim {
+    -moz-filter: blur(5px);
+    -webkit-filter: blur(5px);
+    -o-filter: blur(5px);
+    -ms-filter: blur(5px);
+    filter: blur(5px);
+    filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius=4, MakeShadow=false);
+}
+</style>
+<!--<script type="text/javascript" src="http://www.coding123.net/getip.ashx?js=1"></script>
+<script type="text/javascript" src="https://int.dpool.sina.com.cn/iplookup/iplookup.php?format=js"></script>-->
+<script type="text/javascript" src="https://pv.sohu.com/cityjson?ie=utf-8"></script>
+
+</head>
+<body onload="load()">
+<div id="app" title="">
+	<div class="wait" v-bind:class="{waitHide: waitHide}">
+		<img src="IMG/其他/wait.jpg" alt="请稍后..." class="waitImg">
+	</div>
+<!--蓝色0B2A60-->
+	<header class="hide" v-bind:class="{showFlex: waitHide}" id="header">
+		<div class="headLfet">
+			<span class="headLeftDes hide">{{todayInfo.cityTemp}}</span>
+		</div>
+		<div class="headCenter">
+			<span class="headCenterDes">{{todayInfo.cityTemp}}</span>
+		</div>
+		<div class="headRight">
+			<img src="IMG/blueSet.png" alt="设置" class="headRightDes">
+		</div>
+	</header>
+	<div class="mainContent hide" id="mainContent" v-bind:class="{show: waitHide}">
+		<div class="todayInfo" id="todayInfo">
+			<div class="todayInfoCity">{{todayInfo.city}}</div>
+			<div class="todayInfoWeatherType">{{todayInfo.currentWeather}}</div>
+			<div class="todayInfoWeatherTemperature">
+				<span class="todayInfoWeatherTemperatureLeft" v-bind:class="{ todayTemp: todayTemp}">-</span>
+				<span class="todayInfoWeatherTemperatureCenter">{{todayInfo.currentTemp}}</span>
+				<span class="todayInfoWeatherTemperatureRight">°</span>
+			</div>
+			
+			<div class="todayInfoWeatherPM">
+				<button class="todayInfoWeatherPMDiv" v-on:click="showModalAdvice(PM25Info.advice)">
+					<span class="todayInfoWeatherPMImg"></span>
+					<span class="todayInfoWeatherPMDes">{{PM25Info.PMInfo}}</span>
+				</button>
+			</div>
+		</div>
+		<div class="weekInfo">
+			<div class="weekInfoRow" v-for="week in weekInfo">
+				<span class="weekInfoRowLeft">{{week.newDate}}</span>
+				<span class="weekInfoRowCenter"><img  v-bind:src="week.weatherSrc" v-bind:alt="week.weatherAlt" class="weekInfoRowCenterImg"></span>
+				<span class="weekInfoRowRight">{{week.temp}}</span>
+			</div>
+		</div>
+		<div class="otherInfo">
+			<div class="otherInfoCenter">
+				<div class="otherInfoCenterTop">
+					<span class="otherInfoCenterTopImg imgLeft"></span>
+					<span class="otherInfoCenterTopName">{{todayInfo.wind}}</span>
+				</div>
+				<div class="otherInfoCenterBottom">{{todayInfo.winp}}</div>
+			</div>
+			<div class="otherInfoCenter">
+				<div class="otherInfoCenterTop">
+					<span class="otherInfoCenterTopImg imgCenter"></span>
+					<span class="otherInfoCenterTopName">空气湿度</span>
+				</div>
+				<div class="otherInfoCenterBottom">{{todayInfo.humidity}}</div>
+			</div>
+			<div class="otherInfoCenter">
+				<div class="otherInfoCenterTop">
+					<span class="otherInfoCenterTopImg imgRight"></span>
+					<span class="otherInfoCenterTopName">体感温度</span>
+				</div>
+				<div class="otherInfoCenterBottom">{{todayInfo.feelTemp}}</div>
+			</div>
+		</div>
+		<div class="lifeInfo">
+			<div class="lifeInfoBox">
+				<div class="lifeInfoBoxDes" v-on:click="showModalAdvice(lifeInfo.airPollutionDes)">
+					<div>
+						<img src="IMG/生活/污染.svg" class="lifeInfoTopImg" alt="污染">
+					</div>
+					<div class="lifeInfoCenter">污染指数</div>
+					<div class="lifeInfoBottom">{{lifeInfo.airPollution}}</div>
+				</div>
+				<div class="lifeInfoBoxDes" v-on:click="showModalAdvice(lifeInfo.coldDes)">
+					<div>
+						<img src="IMG/生活/感冒.svg" class="lifeInfoTopImg" alt="感冒">
+					</div>
+					<div class="lifeInfoCenter">感冒指数</div>
+					<div class="lifeInfoBottom">{{lifeInfo.cold}}</div>
+				</div>
+				<div class="lifeInfoBoxDes" v-on:click="showModalAdvice(lifeInfo.cleanCarDes)">
+					<div>
+						<img src="IMG/生活/洗车.svg" class="lifeInfoTopImg" alt="洗车">
+					</div>
+					<div class="lifeInfoCenter">洗车指数</div>
+					<div class="lifeInfoBottom">{{lifeInfo.cleanCar}}</div>
+				</div>
+			</div>
+			<div class="lifeInfoBox">
+				<div class="lifeInfoBoxDes" v-on:click="showModalAdvice(lifeInfo.dressDes)">
+					<div>
+						<img src="IMG/生活/穿衣.svg" class="lifeInfoTopImg" alt="穿衣">
+					</div>
+					<div class="lifeInfoCenter">穿衣指数</div>
+					<div class="lifeInfoBottom">{{lifeInfo.dress}}</div>
+				</div>
+				<div class="lifeInfoBoxDes" v-on:click="showModalAdvice(lifeInfo.UVDes)">
+					<div>
+						<img src="IMG/生活/紫外线.svg" class="lifeInfoTopImg" alt="紫外线">
+					</div>
+					<div class="lifeInfoCenter">紫外线指数</div>
+					<div class="lifeInfoBottom">{{lifeInfo.UV}}</div>
+				</div>
+				<div class="lifeInfoBoxDes" v-on:click="showModalAdvice(lifeInfo.exerciseDes)">
+					<div>
+						<img src="IMG/生活/运动.svg" class="lifeInfoTopImg" alt="运动">
+					</div>
+					<div class="lifeInfoCenter">运动指数</div>
+					<div class="lifeInfoBottom">{{lifeInfo.exercise}}</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- 弹窗 -->
+	<div class="modalBox" id="modalAdviceBox">
+		<span id="modalAdvice" class="modalAdvice"></span>
+	</div>
+
+	<!-- 半透明遮罩 -->
+	<div class="shade" id="shade" onclick="closeModel()"></div>
+	
+</body>
+    <script type="text/javascript" src="JS/autoTool.js"></script>
+    <script type="text/javascript" src="JS/vue.js"></script>
+    <script type="text/javascript" src="JS/vue-resource.js"></script>
+    <script type="text/javascript">
+		//var city = remote_ip_info['ip'];
+		//var city = returnCitySN.cip;
+    	//document.getElementById("app").setAttribute("title", city);
+		
+    	function load() {
+			var mainContent = document.getElementById('mainContent');
+		    mainContent.addEventListener('scroll', function(){
+		    	var todayInfo = document.getElementById('todayInfo');
+		    	var todayInfoTop = todayInfo.getBoundingClientRect().top; 
+		    	var headerHight = document.getElementById('header').offsetHeight;
+		    	var alpha = 0 - (todayInfoTop - headerHight) ;//透明度值变量
+		        if (alpha > -1 && alpha < 150) {
+					var header = document.getElementById('header'); //获取DOM元素对象
+					header.style.opacity = alpha / 150; //设置fierfox等透明度，注意透明度值是小数
+		        }
+		    });
+		}
+
+		function closeModel() {
+			document.getElementById("app").removeAttribute("class", "dim"); 
+			document.getElementById("shade").style.display = "none";
+			document.getElementById("modalAdviceBox").style.display = "none";
+		}
+	</script>
+    <script>
+        var vm = new Vue({
+            el: "#app",
+            data: {
+                IP: "",
+                todayUrl: "",
+               	weekUrl: "",
+                PM25Url: "",
+                lifeUrl: "",
+                todayInfo: {
+                	city: "",
+                	cityTemp: "",
+                	humidity: "",
+                	currentTemp: "",
+                	currentWeather: "",
+                	wind: "",
+                	winp: "",
+                	feelTemp: ""
+                },
+                PM25Info: {
+                	PMInfo: "",
+                	PMLevel: "",
+                	advice: ""
+                },
+                weekInfo: [
+                	{
+                		temp: "",
+	                	weatherAlt: "",
+	                	weatherSrc: "",
+	                	newDate: ""
+                	}
+                ],
+                lifeInfo:{
+                	airPollution: "",
+                	airPollutionDes: "",
+                	cold: "",
+                	coldDes: "",
+                	cleanCar: "",
+                	cleanCarDes: "",
+                	dress: "",
+                	dressDes: "",
+                	UV: "",
+                	UVDes: "",
+                	exercise: "",
+                	exerciseDes: ""
+                },
+                todayTemp: false,
+                waitHide: false,
+                todayShow: false,
+                PMShow: false,
+                weekShow: false,
+                lifeShow: false
+            },
+            mounted: function() {
+				this.IP = returnCitySN.cip;
+				this.getTodayInfo(this.IP);
+				this.getPM25Info(this.IP);
+				this.getWeekInfo(this.IP);
+				this.getLifeInfo(this.IP);
+				
+			},
+			methods: {
+			    getTodayInfo: function(ip) {//获取当前温度信息
+			    	var that = this,
+			    		todayInfo = {},
+			    		todayUrl = "https://sapi.k780.com/?app=weather.today&weaid="+ip+"&appkey=26367&sign=bb23352cb3101781a1ee1fe888329766&format=json";
+					this.$http.jsonp(todayUrl,{jsonp:'jsoncallback'}).then(function(data){
+			        	var info = data.data.result;
+			            todayInfo.city = info.citynm + "市";//当前城市
+			            todayInfo.cityTemp = info.citynm + "市 " + info.temperature_curr;//当前城市温度
+			            todayInfo.humidity = info.humidity;//空气湿度
+			            todayInfo.currentTemp = parseInt(info.temperature_curr);//当前温度
+			            todayInfo.currentWeather = info.weather_curr;//当前天气
+			            todayInfo.wind = info.wind;//风向
+			            todayInfo.winp = info.winp;//风速等级
+			            todayInfo.feelTemp = this.getFeelTemp(info.temperature_curr, info.humidity) + "℃";//体感温度
+
+			            that.todayInfo = todayInfo;
+			            if (parseInt(info.temperature_curr) < 0) {
+			            	that.todayTemp = true;
+			            }
+			            that.todayShow = true;
+			            if (that.todayShow && that.PMShow && that.weekShow && that.lifeShow) {
+			            	that.waitHide = true;
+			            }
+
+		            },function(){
+		            	alert('获取当前温度信息失败');
+		            });
+				},
+				getPM25Info: function(ip) {//获取PM2.5信息
+					var that = this,
+						pm25Info = {},
+						PM25Url = "https://sapi.k780.com/?app=weather.pm25&weaid="+ip+"&appkey=26549&sign=48933e770c3c6304a93b080bbee06f4b&format=json";
+					this.$http.jsonp(PM25Url,{jsonp:'jsoncallback'}).then(function(data){
+			        	var info = data.data.result;
+			            pm25Info.PMInfo = info.aqi + " " + info.aqi_levnm;//空气质量信息
+			            pm25Info.PMLevel = info.aqi_levid;//空气质量等级
+			            pm25Info.advice = info.aqi_remark;//空气质量建议
+
+			            that.PM25Info = pm25Info;
+			            that.PMShow = true;
+			            if (that.todayShow && that.PMShow && that.weekShow && that.lifeShow) {
+			            	that.waitHide = true;
+			            }
+
+		            },function(){
+		            	alert('获取PM2.5信息失败');
+		            });
+				},
+				getWeekInfo: function(ip) {//获取一周内天气信息
+					var that = this,
+						weekUrl = "https://sapi.k780.com/?app=weather.future&weaid="+ip+"&appkey=26367&sign=bb23352cb3101781a1ee1fe888329766&format=json";
+					this.$http.jsonp(weekUrl,{jsonp:'jsoncallback'}).then(function(data){
+			        	var info = data.data.result,
+			        		weekInfoObj = {},
+							weekInfo = [];
+			            for (var i = 0; i < info.length; i++) {
+			            	var weatherText = info[i].weather.indexOf("转") == -1 ? info[i].weather : info[i].weather.split("转")[0],
+			            		days = info[i].days.replace(/-0/g, "-"),
+			            		todayDate = days.substr(5, days.length), 
+			            		weekDay = "",
+			            		temp = info[i].temp_low + "° ~ " + info[i].temp_high + "°";
+
+			            	if (i == 0) {
+			            		weekDay = "今天";
+			            	} else if (i == 1) {
+			            		weekDay = "明天";
+			            	} else {
+			            		weekDay = info[i].week.replace("星期", "周");
+			            	}
+
+			            	weekInfoObj.temp = temp;//温度区间
+			            	weekInfoObj.weatherAlt = weatherText;//天气情况
+			            	weekInfoObj.weatherSrc = "IMG/天气/" + weatherText + ".png";//天气URL
+			            	weekInfoObj.newDate = weekDay + " " + todayDate;//当天日期
+
+			            	//weekInfo.push(weekInfoObj);
+			            	weekInfo[i] = weekInfoObj;
+			            	weekInfoObj = {};
+			            }
+			            that.weekInfo = weekInfo;
+			            that.weekShow = true;
+			            if (that.todayShow && that.PMShow && that.weekShow && that.lifeShow) {
+			            	that.waitHide = true;
+			            }
+
+		            },function(){
+		            	alert('获取一周内天气信息失败');
+		            });
+				},
+				getLifeInfo: function(ip) {//获取一周内生活信息
+					var that = this,
+						lifeUrl = "https://sapi.k780.com/?app=weather.lifeindex&weaid="+ip+"&appkey=26549&sign=48933e770c3c6304a93b080bbee06f4b&format=json";
+					this.$http.jsonp(lifeUrl,{jsonp:'jsoncallback'}).then(function(data){
+			        	var info = data.data.result,
+			        		infoList = that.entries(info),
+			        		lifeInfoObj = {},
+							lifeInfo = [];
+			            for (var i = 0; i < infoList.length; i++) {
+			            	var itemName = infoList[i][0].replace(/-0/g, "-"),
+			            		itemDes = infoList[i][1];
+			            	if (i === 0) {
+			            		that.setLifeInfo(itemDes);
+			            	} else {
+			            		//that.setCookie(itemName,itemDes,i);
+			            	}
+			            }
+			            that.lifeShow = true;
+			            if (that.todayShow && that.PMShow && that.weekShow && that.lifeShow) {
+			            	that.waitHide = true;
+			            }
+
+		            },function(){
+		            	alert('获取一周内天气信息失败');
+		            });
+				},
+				getFeelTemp: function(t, r) {//计算体感温度
+					var T = parseInt(t.replace("℃", "")),
+						RH = parseInt(r.replace("%", "")),
+					    T = 1.8 * T + 32,
+						HI = 0.5 * (T + 61 + (T - 68) * 1.2 + RH * 0.094), 
+						ADJUSTMENT;
+
+				    if (HI >= 80) {
+				    	HI = -42.379 + 2.04901523 * T + 10.14333127 * RH - 0.22475541 * T * RH - 0.00683783 * T * T - 0.05481717 * RH * RH + 0.00122874 * T * T * RH + 0.00085282 * T * RH * RH - 0.00000199 * T * T * RH * RH;
+				        if (RH < 13 && 80 < T && T < 112) {
+				            ADJUSTMENT = (13 - RH) / 4 * math.sqrt((17 - abs(T - 95)) / 17);
+				            HI = HI - ADJUSTMENT;
+				        } else if (RH > 85 && 80 < T && T< 87) {
+				            ADJUSTMENT = (RH - 85) * (87 - T) / 50;
+				            HI += ADJUSTMENT;
+				        }
+				    }  
+				        
+				    return Math.round((HI - 32) / 1.8, 2);
+				},
+				setLifeInfo: function(itemDes) {
+					this.lifeInfo.airPollution = itemDes.lifeindex_kq_attr;
+                	this.lifeInfo.airPollutionDes = itemDes.lifeindex_kq_dese;
+                	this.lifeInfo.cold = itemDes.lifeindex_gm_attr;
+                	this.lifeInfo.coldDes = itemDes.lifeindex_gm_dese;
+                	this.lifeInfo.cleanCar = itemDes.lifeindex_xc_attr;
+                	this.lifeInfo.cleanCarDes = itemDes.lifeindex_xc_dese;
+                	this.lifeInfo.dress = itemDes.lifeindex_ct_attr;
+                	this.lifeInfo.dressDes = itemDes.lifeindex_ct_dese;
+                	this.lifeInfo.UV = itemDes.lifeindex_uv_attr;
+                	this.lifeInfo.UVDes = itemDes.lifeindex_uv_dese;
+                	this.lifeInfo.exercise = itemDes.lifeindex_yd_attr;
+                	this.lifeInfo.exerciseDes = itemDes.lifeindex_yd_dese;
+				},
+				setCookie: function(name,value,times) {
+					var exdate=new Date();
+					exdate.setDate(exdate.getDate()+times)
+					document.cookie= name + "=" +escape(value)+
+					((times==null) ? "" : ";expires="+exdate.toGMTString())
+				},
+				getCookie: function(name) {
+					if (document.cookie.length>0) {
+						var start=document.cookie.indexOf(name + "=")
+						if (start!=-1) { 
+							start=start + name.length+1 
+							var end=document.cookie.indexOf(";",start)
+							if (end==-1) {
+								end=document.cookie.length;
+							}
+							return unescape(document.cookie.substring(start,end))
+						} 
+					}
+					return "";
+				},
+				entries: function(obj) {  
+				    var arr = [];  
+				    for (var key of Object.keys(obj)) {  
+				        arr.push([key, obj[key]]);  
+				    }  
+				    return arr;  
+				},
+				showModalAdvice: function(advice) {
+					setTimeout(function() {
+						document.getElementById("app").setAttribute("class", "dim"); 
+						document.getElementById("shade").style.display = "block";
+						document.getElementById("modalAdviceBox").style.display = "block";
+						document.getElementById('modalAdvice').innerHTML = advice;
+					},200)
+				}
+			}
+        })
+    </script>
+
+</html>
